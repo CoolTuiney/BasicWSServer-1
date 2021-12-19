@@ -4,7 +4,7 @@ const uuidv4 = require("uuid").v4;
 const http = require("http");
 const websocketServer = require("websocket").server;
 const httpServer = http.createServer();
-httpServer.listen(9090, () => console.log("Listening.. on 9090"));
+httpServer.listen(9090, () => console.log("Listening.. on 9090", httpServer.address()));
 
 
 
@@ -12,6 +12,7 @@ const wsServer = new websocketServer({
     "httpServer" : httpServer
 });
 
+let cone
 
 wsServer.on("request", (request) => {
 
@@ -25,9 +26,10 @@ wsServer.on("request", (request) => {
     const connection = request.accept(null, request.origin);
 
     const clientId = uuidv4();
-    players[clientId] = {
-        "connection" : connection
-    };
+
+    // players[clientId] = {
+    //     "connection" : connection
+    // };
 
     let payload = {
         "method" : "connect",
@@ -45,8 +47,11 @@ wsServer.on("request", (request) => {
 
     
     connection.on("message", (message) =>{
+        // console.log(message);
         const result = JSON.parse(message.utf8Data);
 
+        if(result.t == "msg")
+            console.log("Message recieved : " + result.data);
 
     });
 });
