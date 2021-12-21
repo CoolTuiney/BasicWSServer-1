@@ -1,4 +1,4 @@
-const { keyboard, Key, mouse, left, right, up, down, screen } = require("@nut-tree/nut-js");
+const { keyboard, Key, mouse, left, right, up, down, screen, Point } = require("@nut-tree/nut-js");
 const uuidv4 = require("uuid").v4;
 
 const http = require("http");
@@ -15,15 +15,18 @@ const wsServer = new websocketServer({
 
   
   const performAction = async () => {
-    await keyboard.pressKey(Key.LeftControl, Key.P);
-    await keyboard.releaseKey(Key.LeftControl, Key.P);
+
+    await keyboard.pressKey(Key.LeftControl, Key.Q);
+    await keyboard.releaseKey(Key.LeftControl, Key.Q);
+
+
   };
   
 
 //   (async () => {
 //     console.log("Started");
 //     //   await square();
-//     await performAction();
+//     await console.log(mouse.getPosition());
 
 //     // connection.send(JSON.stringify(payload));
 //     await keyboard.type("package"); 
@@ -31,8 +34,18 @@ const wsServer = new websocketServer({
 
 //     console.log("Performed");
 // })();
- 
 
+async function asyncCall(connection, payload) {
+  console.log("Started");
+  //   await square();
+  await performAction();
+  console.log("Performed");
+  connection.send(JSON.stringify(payload));
+  // await keyboard.type("package"); 
+  // await keyboard.type(Key.Return);
+}
+
+// asyncCall();
 
 wsServer.on("request", (request) => {
 
@@ -72,23 +85,28 @@ wsServer.on("request", (request) => {
         } else if(result.t == "btnPressed")
         {
 
+          // { Recived DATA
+          //   t : btnPressed,
+          //   btnId : 0
+          // }
+
           const payload = {
             "method" : "btnResponse",
             "btnId" : result.btnId,
-            "status" : 0
+            "status" : 1
           }
-
-            (async () => {
-              console.log("Started");
-              //   await square();
-              await performAction();
-              console.log("Performed");
-              connection.send(JSON.stringify(payload));
-              // await keyboard.type("package"); 
-              // await keyboard.type(Key.Return);
-          })();
+          asyncCall(connection, payload);
+          //   (async () => {
+          //     console.log("Started");
+          //     //   await square();
+          //     await performAction();
+          //     console.log("Performed");
+          //     connection.send(JSON.stringify(payload));
+          //     // await keyboard.type("package"); 
+          //     // await keyboard.type(Key.Return);
+          // })();
         }
     });
 
-
+     
 });
