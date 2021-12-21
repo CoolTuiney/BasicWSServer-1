@@ -1,4 +1,4 @@
-
+const { keyboard, Key, mouse, left, right, up, down, screen } = require("@nut-tree/nut-js");
 const uuidv4 = require("uuid").v4;
 
 const http = require("http");
@@ -12,7 +12,27 @@ const wsServer = new websocketServer({
     "httpServer" : httpServer
 });
 
-let cone
+
+  
+  const performAction = async () => {
+    await keyboard.pressKey(Key.LeftControl, Key.P);
+    await keyboard.releaseKey(Key.LeftControl, Key.P);
+  };
+  
+
+//   (async () => {
+//     console.log("Started");
+//     //   await square();
+//     await performAction();
+
+//     // connection.send(JSON.stringify(payload));
+//     await keyboard.type("package"); 
+//     await keyboard.type(Key.Return);
+
+//     console.log("Performed");
+// })();
+ 
+
 
 wsServer.on("request", (request) => {
 
@@ -27,9 +47,6 @@ wsServer.on("request", (request) => {
 
     const clientId = uuidv4();
 
-    // players[clientId] = {
-    //     "connection" : connection
-    // };
 
     let payload = {
         "method" : "connect",
@@ -47,11 +64,31 @@ wsServer.on("request", (request) => {
 
     
     connection.on("message", (message) =>{
-        // console.log(message);
         const result = JSON.parse(message.utf8Data);
 
         if(result.t == "msg")
-            console.log("Message recieved : " + result.data);
+        {
+          console.log("Message recieved : " + result.data);
+        } else if(result.t == "btnPressed")
+        {
 
+          const payload = {
+            "method" : "btnResponse",
+            "btnId" : result.btnId,
+            "status" : 0
+          }
+
+            (async () => {
+              console.log("Started");
+              //   await square();
+              await performAction();
+              console.log("Performed");
+              connection.send(JSON.stringify(payload));
+              // await keyboard.type("package"); 
+              // await keyboard.type(Key.Return);
+          })();
+        }
     });
+
+
 });

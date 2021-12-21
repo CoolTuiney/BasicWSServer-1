@@ -11,6 +11,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@nut-tree/nut-js": "^2.0.0-RC1",
     "uuid": "^8.3.2",
     "websocket": "^1.0.33"
   }
